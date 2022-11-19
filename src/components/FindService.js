@@ -1,14 +1,29 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { fetchServiceRequest, selectService, reloadService } from '../features/service/serviceSlice';
 import NoService from './NoService';
 import Service from './Service';
+import { withObservable } from '../hoc/withObservable';
+import { useDispatch } from 'react-redux';
 
-export default function FindService({ ...rest }) {
+export default function FindService() {
     const params = useParams();
-    const services = [];
-    if (params?.id === undefined) return <NoService />;
+
+    const dispatch = useDispatch();
+  
+    dispatch(reloadService());
+
     const serviceID = Number(params.id);
-    if (serviceID === undefined) return <NoService />;
-    const service = services.find(x => x?.id === serviceID);
-    return <Service service={ service } { ...rest } />;
+    const ServiceObservable = withObservable(Service);
+
+    if (params?.id === undefined) return <NoService />;
+    
+    return (
+      <ServiceObservable
+        fetchAction={ fetchServiceRequest }
+        fetchUrl={ `${process.env.REACT_APP_SERVICE_URL}/${serviceID}` }
+        selector={ selectService }
+        returnLink="/"
+        />
+    );
 };

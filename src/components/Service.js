@@ -2,17 +2,19 @@ import React from "react";
 import ReturnButton from "./ReturnButton";
 import NoService from "./NoService";
 
-export default function Service({ service, returnLink }) {
-  if (!service?.id) return <NoService />;
+export default function Service({ data, isLoading, error, returnLink }) {
+  if (data == null) return <NoService />;
+  const { id, name, price, content } = data;
+  if (!id) return <NoService />;
   
   return (
     <>
       <div className="service" >
-        <span>{service.name}</span>
-        <span>{service.price}</span>
-        <span>{service.content}</span>
+        <span>Название: {name}</span>
+        <span>Цена: {price}</span>
+        <span>Описание: {content}</span>
       </div>
-      <ReturnButton returnLink={returnLink} />
+      {returnLink && <ReturnButton returnLink={ returnLink } />}
     </>
   );
 };
